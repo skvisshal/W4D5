@@ -32,7 +32,7 @@ def two_sum?(arr, target_sum)
     arr.each do |ele|
         hash[ele] += 1
     end
-    hash
+    
 
 
 end
