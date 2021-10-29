@@ -1,3 +1,5 @@
+require "benchmark"
+
 def first_anagram?(string_1, string_2) 
     anagrams = anagram_recursive(string_1)
     anagrams.include?(string_2)
@@ -33,5 +35,38 @@ def second_anagram?(string_1,string_2)          #O(n^2 + n) = #O(n^2)
 end
 
 
-p second_anagram?("gizmo", "sally")    #=> false
-p second_anagram?("elvis", "lives")    #=> true
+def third_anagram?(str_1, str_2) #O(n log n)
+    str1_arr = str_1.split("").sort  #O(n) + O(n log n)
+    str2_arr = str_2.split("").sort  #O(n) + O(n log n)
+    str1_arr == str2_arr             #O(1)
+end
+
+p third_anagram?("gizmo", "sally")    #=> false
+p third_anagram?("elvis", "lives")    #=> true
+
+def fourth_anagram?(str1, str2) #O(n)
+    hash = Hash.new(0)                                  #O(1)
+    return false if str1.length != str2.length          #O(1)
+
+    (0...str1.length).each do |i|                       #O(n)
+        hash[str1[i]] += 1                              #O(1)
+        hash[str2[i]] += 1                              #O(1)
+    end
+
+    hash.each do |k,v|                                  #O(n)
+        return false if v % 2 != 0                      #O(1)
+    end
+    true
+end
+
+p fourth_anagram?("gizmo", "sally")    #=> false
+p fourth_anagram?("elvis", "lives")    #=> true
+
+Benchmark.benchmark(Benchmark::CAPTION, 9, Benchmark::FORMAT,
+                    "Avg. Merge:  ", "Avg. Bubble: ") do |b|
+    p ana_1 = b.report("Tot. Merge:  ") { first_anagram?("elvis", "lives") }
+    p ana_2 = b.report("Tot. Bubble: ") { second_anagram?("elvis", "lives") }
+    p ana_3 = b.report("Tot. Bubble: ") { third_anagram?("elvis", "lives") }
+    p ana_4 = b.report("Tot. Bubble: ") { fourth_anagram?("elvis", "lives") }
+end
+
